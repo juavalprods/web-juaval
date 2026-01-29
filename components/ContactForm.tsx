@@ -20,31 +20,36 @@ export const ContactForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
-    
-    // Simulating Notion Integration + Local Storage for demo purposes
-    setTimeout(() => {
-      // Get existing leads or empty array
-      const existingLeads = JSON.parse(localStorage.getItem('juaval_leads') || '[]');
-      const newLead = { 
-        ...formData, 
-        id: Date.now(),
-        date: new Date().toLocaleString() 
-      };
-      
-      // Save locally
-      localStorage.setItem('juaval_leads', JSON.stringify([newLead, ...existingLeads]));
-      
-      console.log('Lead enviado a simulación de Notion:', newLead);
-      setStatus('success');
-      setFormData({
-        name: '',
-        company: '',
-        phone: '',
-        email: '',
-        instagram: '',
-        message: ''
+
+    try {
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    }, 1500);
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus('success');
+        setFormData({
+          name: '',
+          company: '',
+          phone: '',
+          email: '',
+          instagram: '',
+          message: ''
+        });
+      } else {
+        console.error('Error submitting form:', data.message);
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setStatus('error');
+    }
   };
 
   if (status === 'success') {
@@ -57,7 +62,7 @@ export const ContactForm: React.FC = () => {
         <p className="text-greyOlive">
           ¡Gracias por escribirnos! Muy pronto nos pondremos en contacto contigo para empezar a mejorar tus redes sociales.
         </p>
-        <button 
+        <button
           onClick={() => setStatus('idle')}
           className="mt-4 text-onyx underline font-bold hover:text-coolSky transition-colors"
         >
