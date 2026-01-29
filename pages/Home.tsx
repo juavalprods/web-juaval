@@ -30,7 +30,7 @@ export const Home: React.FC = () => {
                 to="/servicios"
                 className="bg-onyx text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-white hover:text-onyx border-2 border-transparent hover:border-onyx transition-all text-center"
               >
-                Ver Método Juaval
+                Como trabajamos
               </Link>
             </div>
           </div>
